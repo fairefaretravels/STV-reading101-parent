@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Word Builder 🌟</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:#0d1b4b;font-family:'Nunito',sans-serif;color:#fff;}
+
+/* Stars */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.star{position:absolute;width:2px;height:2px;background:rgba(255,255,255,0.7);border-radius:50%;animation:tw var(--d) ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:.15;}50%{opacity:1;}}
+
+/* Screens */
+.screen{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;overflow-y:auto;padding:20px 16px 24px;}
+.screen.hidden{display:none;}
+.screen.centered{justify-content:center;}
+
+/* ── HOME ── */
+#home{background:linear-gradient(160deg,#0d1b4b,#1a0540);justify-content:center;}
+.home-icon{font-size:72px;animation:bop .7s ease-in-out infinite alternate;margin-bottom:8px;}
+@keyframes bop{from{transform:translateY(0)rotate(-4deg);}to{transform:translateY(-12px)rotate(4deg);}}
+.home-title{font-size:34px;font-weight:900;letter-spacing:2px;text-align:center;margin-bottom:4px;}
+.home-sub{font-size:14px;color:rgba(255,255,255,0.45);text-align:center;margin-bottom:28px;line-height:1.5;max-width:300px;}
+.big-btn{padding:15px 36px;border-radius:99px;border:none;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:transform .1s;margin:5px 0;width:270px;text-align:center;display:block;}
+.big-btn:active{transform:scale(.95);}
+.btn-play{background:linear-gradient(135deg,#f7c948,#f98b3a);color:#3d1a00;box-shadow:0 4px 24px #f7c94866;}
+.btn-teacher{background:linear-gradient(135deg,#c77dff,#6bcbff);color:#fff;box-shadow:0 4px 20px #c77dff44;}
+.btn-ghost{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.18);}
+
+/* Music bar on home */
+#home-music-bar{display:flex;align-items:center;gap:10px;margin-top:18px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:99px;padding:8px 18px;}
+.music-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;}
+.icon-btn{background:none;border:none;font-size:22px;cursor:pointer;padding:2px;}
+.icon-btn:active{transform:scale(.88);}
+#music-upload-input{display:none;}
+
+/* ── TEACHER MODE ── */
+#teacher{background:linear-gradient(160deg,#0d1b4b,#1a0540);padding-top:48px;gap:12px;}
+.screen-title{font-size:22px;font-weight:900;color:#f7c948;letter-spacing:1px;margin-bottom:4px;text-align:center;}
+.screen-sub{font-size:13px;color:rgba(255,255,255,0.4);text-align:center;margin-bottom:8px;line-height:1.5;}
+
+/* Add sentence form */
+.add-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:16px;width:100%;max-width:440px;}
+.add-card-title{font-size:14px;font-weight:900;color:#c77dff;margin-bottom:10px;letter-spacing:1px;}
+.field-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.text-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;padding:10px 14px;outline:none;margin-bottom:12px;-webkit-appearance:none;}
+.text-input::placeholder{color:rgba(255,255,255,0.25);}
+.text-input:focus{border-color:#c77dff;}
+
+.photo-upload-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.photo-preview-sm{width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,0.2);}
+.photo-placeholder-sm{width:52px;height:52px;border-radius:12px;border:2px dashed rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;}
+.upload-lbl-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:99px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;}
+
+.add-btn{background:linear-gradient(135deg,#c77dff,#6bcbff);border:none;color:#fff;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;padding:12px;border-radius:14px;cursor:pointer;width:100%;letter-spacing:1px;}
+.add-btn:active{transform:scale(.97);}
+
+/* Custom sentence list */
+.custom-list{width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;}
+.custom-list-title{font-size:13px;font-weight:900;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin:4px 0;}
+.custom-item{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.ci-photo{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.ci-no-photo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ci-text{flex:1;font-size:15px;font-weight:700;color:#fff;}
+.ci-words{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.ci-del{background:rgba(255,80,80,0.2);border:none;border-radius:8px;color:#ff7b7b;font-size:18px;padding:6px 10px;cursor:pointer;flex-shrink:0;}
+
+.empty-state{text-align:center;color:rgba(255,255,255,0.25);font-size:14px;padding:16px;line-height:1.6;}
+
+/* ── GAME ── */
+#game{background:linear-gradient(160deg,#0d1b4b,#1a0540);padding:12px 12px 16px;gap:0;justify-content:flex-start;}
+
+#top-bar{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:8px;flex-shrink:0;}
+.tb-level{font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;}
+.tb-score{font-size:20px;font-weight:900;color:#f7c948;}
+.tb-controls{display:flex;gap:4px;align-items:center;}
+.ctrl-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:99px;color:#fff;font-size:15px;padding:5px 10px;cursor:pointer;font-family:'Nunito',sans-serif;}
+.ctrl-btn:active{transform:scale(.9);}
+
+#prog-track{width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;margin-bottom:10px;flex-shrink:0;}
+#prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#a8ff78,#6bcbff);transition:width .5s ease;}
+
+/* Picture clue */
+#clue-area{width:100%;display:flex;justify-content:center;margin-bottom:8px;flex-shrink:0;position:relative;}
+#clue-img-wrap{position:relative;display:inline-block;}
+#clue-img{width:90px;height:90px;border-radius:18px;object-fit:cover;border:3px solid rgba(255,255,255,0.25);display:none;}
+#clue-placeholder{width:90px;height:90px;border-radius:18px;border:2px dashed rgba(255,255,255,0.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;font-weight:700;letter-spacing:.5px;}
+#clue-placeholder .cp-icon{font-size:26px;}
+#clue-upload-overlay{position:absolute;bottom:-6px;right:-6px;background:#c77dff;border:none;border-radius:99px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+#clue-file-input{display:none;}
+
+/* Target */
+#target-area{width:100%;margin-bottom:8px;flex-shrink:0;}
+.target-label{font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:6px;text-align:center;}
+#target-slots{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;min-height:52px;align-items:center;}
+.slot{min-width:55px;height:48px;border-radius:13px;border:2.5px dashed rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;padding:0 11px;transition:all .2s;color:#fff;}
+.slot.filled{background:rgba(255,255,255,0.1);border-style:solid;border-color:rgba(255,255,255,0.3);}
+.slot.correct{background:rgba(100,240,130,0.18);border-color:#64f082;color:#64f082;}
+.slot.wrong{background:rgba(255,80,80,0.15);border-color:#ff5050;animation:shake .35s;}
+.slot.listening{background:rgba(108,203,255,0.18);border-color:#6bcbff;animation:pulse .8s infinite;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* Hint */
+#hint-area{margin-bottom:6px;text-align:center;flex-shrink:0;}
+#hint-btn{background:none;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.4);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:5px 14px;border-radius:99px;cursor:pointer;}
+#hint-text{font-size:13px;color:rgba(255,255,255,0.28);margin-top:5px;font-style:italic;min-height:18px;}
+
+/* Mic status */
+#mic-bar{width:100%;text-align:center;min-height:22px;margin-bottom:5px;font-size:12px;font-weight:700;color:#6bcbff;letter-spacing:.5px;flex-shrink:0;}
+
+/* Tiles */
+#tiles-label{font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:8px;text-align:center;width:100%;flex-shrink:0;}
+#tiles-area{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;width:100%;}
+.word-tile{position:relative;min-width:58px;height:50px;border-radius:14px;border:none;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;cursor:pointer;padding:0 13px;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .12s,opacity .2s;box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+.word-tile:active{transform:scale(.9);}
+.word-tile.used{opacity:.2;pointer-events:none;}
+.word-tile.listening-tile{animation:pulseTile .5s infinite alternate;}
+@keyframes pulseTile{from{transform:scale(1);}to{transform:scale(1.1);}}
+.mic-btn{background:none;border:none;font-size:14px;cursor:pointer;padding:1px;line-height:1;opacity:.65;}
+.mic-btn:active,.mic-btn.active{opacity:1;}
+.tc-0{background:#f7c948;color:#3d1a00;}
+.tc-1{background:#6bcbff;color:#003050;}
+.tc-2{background:#ff6bcb;color:#3d0020;}
+.tc-3{background:#a8ff78;color:#1a3d00;}
+.tc-4{background:#ff9a56;color:#3d1500;}
+.tc-5{background:#c77dff;color:#1a003d;}
+.tc-6{background:#56ffd5;color:#003d30;}
+.tc-7{background:#ff7b7b;color:#3d0000;}
+
+/* Feedback */
+#feedback{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;pointer-events:none;text-align:center;opacity:0;transition:opacity .15s;}
+#feedback.show{opacity:1;}
+.fb-emoji{font-size:70px;display:block;animation:popIn .3s cubic-bezier(.34,1.56,.64,1);}
+.fb-text{font-size:26px;font-weight:900;text-shadow:0 2px 12px rgba(0,0,0,0.5);}
+@keyframes popIn{from{transform:scale(.3);}to{transform:scale(1);}}
+
+/* Confetti */
+#confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:199;overflow:hidden;}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confFall var(--dur) ease-in forwards;}
+@keyframes confFall{0%{transform:translateY(-20px)rotate(0);opacity:1;}100%{transform:translateY(100vh)rotate(720deg);opacity:0;}}
+
+/* Level banner */
+#level-banner{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(8,3,35,0.93);backdrop-filter:blur(10px);}
+.lb-icon{font-size:74px;animation:bop .6s ease-in-out infinite alternate;}
+.lb-title{font-size:30px;font-weight:900;color:#f7c948;letter-spacing:2px;margin:10px 0 4px;text-align:center;}
+.lb-sub{font-size:15px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:4px;}
+.lb-count{font-size:62px;font-weight:900;color:#f7c948;margin:4px 0;}
+.lb-affirm{font-size:20px;font-weight:900;letter-spacing:3px;margin-bottom:20px;}
+
+/* Win */
+#win-screen{background:linear-gradient(160deg,#0d1b4b,#1a0540);justify-content:center;gap:12px;}
+.ws-emoji{font-size:78px;animation:bop .65s ease-in-out infinite alternate;}
+.ws-title{font-size:28px;font-weight:900;letter-spacing:2px;color:#f7c948;text-align:center;}
+.ws-score{font-size:50px;font-weight:900;}
+.ws-sub{font-size:14px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.6;padding:0 20px;max-width:340px;}
+
+/* Back btn */
+.back-btn{position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:99px;color:rgba(255,255,255,0.6);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;padding:7px 14px;cursor:pointer;z-index:5;}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="confetti-layer"></div>
+<div id="feedback"><span class="fb-emoji" id="fb-emoji"></span><div class="fb-text" id="fb-text"></div></div>
+
+<!-- Level banner -->
+<div id="level-banner">
+  <div class="lb-icon" id="lb-icon">🌟</div>
+  <div class="lb-title" id="lb-title">LEVEL UP!</div>
+  <div class="lb-sub" id="lb-sub">Now build sentences with</div>
+  <div class="lb-count" id="lb-count">3 words!</div>
+  <div class="lb-affirm" id="lb-affirm" style="color:#ff6bcb">BRILLIANT!</div>
+  <button class="big-btn btn-play" id="lb-next" style="width:230px;font-size:17px;">Keep Going! 🚀</button>
+</div>
+
+<!-- ── HOME ── -->
+<div class="screen centered" id="home">
+  <div class="home-icon">📚</div>
+  <div class="home-title">WORD BUILDER</div>
+  <div class="home-sub">Tap words in the right order,<br>say them out loud, earn stars!</div>
+  <button class="big-btn btn-play" id="btn-start">START READING 🚀</button>
+  <button class="big-btn btn-teacher" id="btn-teacher">🎓 Teacher / Parent Mode</button>
+  <button class="big-btn btn-ghost" id="btn-how">How to play</button>
+
+  <div id="home-music-bar">
+    <span style="font-size:18px;">🎵</span>
+    <span class="music-label">MUSIC</span>
+    <button class="icon-btn" id="music-toggle-btn" title="Toggle music">▶️</button>
+    <button class="icon-btn" id="music-upload-btn" title="Upload your own music">📂</button>
+    <input type="file" id="music-upload-input" accept="audio/*">
+    <span id="music-name" style="font-size:11px;color:rgba(255,255,255,0.3);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+  </div>
+</div>
+
+<!-- ── HOW TO PLAY ── -->
+<div class="screen" id="howto" style="gap:12px;padding-top:50px;background:linear-gradient(160deg,#0d1b4b,#1a0540);">
+  <button class="back-btn" id="how-back">← Back</button>
+  <div class="screen-title">HOW TO PLAY 📖</div>
+  <div style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:10px;">
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:14px 16px;">
+      <div style="font-size:26px;margin-bottom:6px;">👆</div>
+      <div style="font-size:14px;font-weight:900;color:#f7c948;margin-bottom:4px;">Tap the words</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;">Tap the colourful word tiles at the bottom in the right order to build the sentence.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:14px 16px;">
+      <div style="font-size:26px;margin-bottom:6px;">🎤</div>
+      <div style="font-size:14px;font-weight:900;color:#f7c948;margin-bottom:4px;">Or say the word!</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;">Tap 🎤 on any tile and say the word. If you say it right it counts!</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:14px 16px;">
+      <div style="font-size:26px;margin-bottom:6px;">🖼️</div>
+      <div style="font-size:14px;font-weight:900;color:#f7c948;margin-bottom:4px;">Look at the picture clue</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;">A picture shows what the sentence means. Teachers can add their own pictures!</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:14px 16px;">
+      <div style="font-size:26px;margin-bottom:6px;">⭐</div>
+      <div style="font-size:14px;font-weight:900;color:#f7c948;margin-bottom:4px;">Earn stars &amp; level up</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;">Start with 2-word sentences, work up to 5 words. Finish all levels to win!</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.25);text-align:center;max-width:320px;line-height:1.6;margin-top:4px;">🎤 Speech works best in Chrome (Android) and Safari (iOS). Allow microphone access when asked.</div>
+  <button class="big-btn btn-play" id="how-start">Let's go! 🚀</button>
+</div>
+
+<!-- ── TEACHER MODE ── -->
+<div class="screen" id="teacher" style="background:linear-gradient(160deg,#0d1b4b,#1a0540);gap:12px;padding-top:50px;">
+  <button class="back-btn" id="teacher-back">← Back</button>
+  <div class="screen-title">🎓 TEACHER MODE</div>
+  <div class="screen-sub">Add your own sentences with picture clues.<br>Everything saves on this device.</div>
+
+  <!-- Add form -->
+  <div class="add-card" style="width:100%;max-width:440px;">
+    <div class="add-card-title">➕ ADD A SENTENCE</div>
+    <div class="field-label">Sentence (2–5 words)</div>
+    <input class="text-input" type="text" id="new-sentence" placeholder="e.g. the dog runs fast" maxlength="60">
+    <div class="field-label">Picture clue (optional)</div>
+    <div class="photo-upload-row">
+      <div id="new-photo-preview-wrap">
+        <div class="photo-placeholder-sm" id="new-photo-placeholder">📷</div>
+        <img class="photo-preview-sm" id="new-photo-preview" style="display:none;">
+      </div>
+      <label class="upload-lbl-btn" for="new-photo-input">Choose photo</label>
+      <input type="file" id="new-photo-input" accept="image/*" style="display:none;">
+      <button id="new-photo-clear" style="display:none;background:none;border:none;color:#ff7b7b;font-size:13px;font-weight:700;cursor:pointer;">Remove</button>
+    </div>
+    <button class="add-btn" id="add-sentence-btn">Add Sentence ✓</button>
+  </div>
+
+  <!-- Custom list -->
+  <div class="custom-list" id="custom-list" style="width:100%;max-width:440px;">
+    <div class="custom-list-title">YOUR SENTENCES</div>
+    <div id="custom-list-inner"></div>
+  </div>
+
+  <button class="big-btn btn-play" id="teacher-play" style="margin-top:8px;">Play with my sentences 🚀</button>
+</div>
+
+<!-- ── GAME ── -->
+<div class="screen hidden" id="game">
+  <div id="top-bar">
+    <div class="tb-level" id="level-label">LEVEL 1 · 2 WORDS</div>
+    <div class="tb-score">⭐ <span id="score-val">0</span></div>
+    <div class="tb-controls">
+      <button class="ctrl-btn" id="music-game-btn">🎵</button>
+      <button class="ctrl-btn" id="game-home-btn">🏠</button>
+    </div>
+  </div>
+  <div id="prog-track"><div id="prog-fill" style="width:0%"></div></div>
+
+  <!-- Picture clue -->
+  <div id="clue-area">
+    <div id="clue-img-wrap">
+      <div id="clue-placeholder">
+        <div class="cp-icon">📷</div>
+        <span>add photo</span>
+      </div>
+      <img id="clue-img" src="" alt="picture clue">
+      <button id="clue-upload-overlay" title="Upload picture clue">📷</button>
+      <input type="file" id="clue-file-input" accept="image/*">
+    </div>
+  </div>
+
+  <div id="target-area">
+    <div class="target-label">Build this sentence</div>
+    <div id="target-slots"></div>
+  </div>
+
+  <div id="hint-area">
+    <button id="hint-btn">💡 Hint</button>
+    <div id="hint-text"></div>
+  </div>
+
+  <div id="mic-bar"></div>
+  <div id="tiles-label">Tap the words in order</div>
+  <div id="tiles-area"></div>
+</div>
+
+<!-- ── WIN ── -->
+<div class="screen hidden centered" id="win-screen">
+  <div class="ws-emoji">🏆</div>
+  <div class="ws-title">YOU DID IT!</div>
+  <div style="color:rgba(255,255,255,0.35);font-size:13px;">Final score</div>
+  <div class="ws-score">⭐ <span id="win-score">0</span></div>
+  <div class="ws-sub">Amazing reading! You built sentences with 2, 3, 4 and 5 words. You are BRILLIANT!</div>
+  <button class="big-btn btn-play" id="btn-again">Play Again 🚀</button>
+  <button class="big-btn btn-ghost" id="btn-win-home" style="width:200px;">Home</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const BUILT_IN = {
+  2:["I am","he runs","she plays","we jump","it sits","go now","come in","look up","I see","cats play","dogs run","we eat","I read","she draws","the sun"],
+  3:["I am big","he can run","she is here","we can jump","I like cats","dogs are fun","look at me","come to us","I see you","she can draw","he is fast","we are here","I go now","sit down here","the dog barks"],
+  4:["I can see you","she is so big","he likes to run","we jump up high","the cat is here","I read every day","dogs like to run","look at the sky","come sit with me","I am a reader","the sun is bright","I see a bird","we all like cake","she can draw well","he went to school"],
+  5:["I like to read books","she can run very fast","the big dog can jump","we all go to school","I see a red bird","he likes to draw cats","look at the big sky","come and play with us","she is so very kind","I can read every word","we like to eat cake","the cat sat by me"]
+};
+const AFFIRMATIONS=["BRILLIANT!","AMAZING!","SUPERSTAR!","YOU GOT IT!","SO SMART!","FANTASTIC!","KEEP GOING!","BEAUTIFUL!","GO GETTA!","WINNER!"];
+const GLOWS=['#c77dff','#6bcbff','#ff6bcb','#a8ff78','#ff9a56','#56ffd5','#ffd93d','#ff7b7b'];
+const CONF_COLORS=['#f7c948','#6bcbff','#ff6bcb','#a8ff78','#ff9a56','#c77dff'];
+
+// ═══════════════════════════════════════════
+// STORAGE — custom sentences
+// ═══════════════════════════════════════════
+function loadCustom(){ try{ return JSON.parse(localStorage.getItem('wb_custom')||'[]'); }catch(e){ return []; } }
+function saveCustom(arr){ try{ localStorage.setItem('wb_custom',JSON.stringify(arr)); }catch(e){} }
+let customSentences = loadCustom(); // [{text,photo,words}]
+let useCustomMode = false;
+
+// ═══════════════════════════════════════════
+// STARS
+// ═══════════════════════════════════════════
+(function(){
+  const layer=document.getElementById('stars');
+  for(let i=0;i<55;i++){
+    const s=document.createElement('div');s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;animation-delay:${Math.random()*4}s;`;
+    layer.appendChild(s);
+  }
+})();
+
+// ═══════════════════════════════════════════
+// AUDIO ENGINE
+// ═══════════════════════════════════════════
+let audioCtx=null, musicPlaying=false, musicSource=null, customAudioBuffer=null, musicLoop=null;
+let sfxEnabled=true;
+
+function getCtx(){ if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+// Simple cheerful melody using Web Audio API
+const MELODY=[392,440,523,587,523,440,392,349,392,440,523,587,659,587,523,440];
+const MELODY_DUR=0.22;
+let melodyIdx=0, melodyTO=null;
+
+function playMelodyNote(){
+  if(!musicPlaying) return;
+  const ctx=getCtx();
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  const freq=MELODY[melodyIdx%MELODY.length];
+  osc.type='sine';
+  osc.frequency.setValueAtTime(freq,ctx.currentTime);
+  gain.gain.setValueAtTime(0.07,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+MELODY_DUR*0.9);
+  // add harmony
+  const osc2=ctx.createOscillator();
+  const g2=ctx.createGain();
+  osc2.type='triangle';
+  osc2.frequency.setValueAtTime(freq*1.5,ctx.currentTime);
+  g2.gain.setValueAtTime(0.025,ctx.currentTime);
+  g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+MELODY_DUR*0.7);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc2.connect(g2); g2.connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime+MELODY_DUR);
+  osc2.start(); osc2.stop(ctx.currentTime+MELODY_DUR);
+  melodyIdx++;
+  melodyTO=setTimeout(playMelodyNote, MELODY_DUR*1000);
+}
+
+function playCustomAudio(){
+  if(!customAudioBuffer||!musicPlaying) return;
+  const ctx=getCtx();
+  if(musicSource){ try{musicSource.stop();}catch(e){} }
+  musicSource=ctx.createBufferSource();
+  musicSource.buffer=customAudioBuffer;
+  musicSource.loop=true;
+  const gain=ctx.createGain(); gain.gain.value=0.5;
+  musicSource.connect(gain); gain.connect(ctx.destination);
+  musicSource.start();
+}
+
+function startMusic(){
+  musicPlaying=true;
+  updateMusicBtns();
+  if(customAudioBuffer){ playCustomAudio(); }
+  else { melodyIdx=0; playMelodyNote(); }
+}
+
+function stopMusic(){
+  musicPlaying=false;
+  clearTimeout(melodyTO);
+  if(musicSource){ try{musicSource.stop();}catch(e){} musicSource=null; }
+  updateMusicBtns();
+}
+
+function toggleMusic(){
+  if(musicPlaying) stopMusic(); else startMusic();
+}
+
+function updateMusicBtns(){
+  document.getElementById('music-toggle-btn').textContent=musicPlaying?'⏸️':'▶️';
+  document.getElementById('music-game-btn').textContent=musicPlaying?'🔇':'🎵';
+}
+
+// SFX
+function playSfxCorrect(){
+  try{
+    const ctx=getCtx();
+    [523,659,784].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.12,ctx.currentTime+i*.1);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*.1+.25);
+      o.connect(g);g.connect(ctx.destination);
+      o.start(ctx.currentTime+i*.1); o.stop(ctx.currentTime+i*.1+.3);
+    });
+  }catch(e){}
+}
+function playSfxWrong(){
+  try{
+    const ctx=getCtx();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sawtooth'; o.frequency.setValueAtTime(220,ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(110,ctx.currentTime+.2);
+    g.gain.setValueAtTime(0.08,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+.2);
+    o.connect(g);g.connect(ctx.destination);
+    o.start();o.stop(ctx.currentTime+.22);
+  }catch(e){}
+}
+function playSfxWin(){
+  try{
+    const ctx=getCtx();
+    [523,659,784,1047].forEach((f,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.12,ctx.currentTime+i*.13);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*.13+.35);
+      o.connect(g);g.connect(ctx.destination);
+      o.start(ctx.currentTime+i*.13); o.stop(ctx.currentTime+i*.13+.4);
+    });
+  }catch(e){}
+}
+
+// Music upload
+document.getElementById('music-upload-btn').onclick=()=>document.getElementById('music-upload-input').click();
+document.getElementById('music-upload-input').onchange=function(){
+  const file=this.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    getCtx().decodeAudioData(e.target.result,buf=>{
+      customAudioBuffer=buf;
+      document.getElementById('music-name').textContent=file.name.replace(/\.[^.]+$/,'');
+      if(musicPlaying){ stopMusic(); startMusic(); }
+    },err=>alert('Could not load audio file. Try MP3 or WAV.'));
+  };
+  reader.readAsArrayBuffer(file);
+};
+document.getElementById('music-toggle-btn').onclick=toggleMusic;
+document.getElementById('music-game-btn').onclick=toggleMusic;
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+document.getElementById('btn-start').onclick=()=>{ useCustomMode=false; resetGame(); show('game'); newRound(); };
+document.getElementById('btn-teacher').onclick=()=>{ renderCustomList(); show('teacher'); };
+document.getElementById('btn-how').onclick=()=>show('howto');
+document.getElementById('how-back').onclick=()=>show('home');
+document.getElementById('how-start').onclick=()=>{ useCustomMode=false; resetGame(); show('game'); newRound(); };
+document.getElementById('teacher-back').onclick=()=>show('home');
+document.getElementById('teacher-play').onclick=()=>{
+  if(customSentences.length===0){ alert('Add at least one sentence first!'); return; }
+  useCustomMode=true; resetGame(); show('game'); newRound();
+};
+document.getElementById('game-home-btn').onclick=()=>{ stopListening(); show('home'); };
+document.getElementById('lb-next').onclick=()=>{ hideLevelBanner(); newRound(); };
+document.getElementById('hint-btn').onclick=showHint;
+document.getElementById('btn-again').onclick=()=>{ useCustomMode=false; resetGame(); show('game'); newRound(); };
+document.getElementById('btn-win-home').onclick=()=>show('home');
+
+// ═══════════════════════════════════════════
+// TEACHER MODE
+// ═══════════════════════════════════════════
+let newPhotoDataURL=null;
+
+document.getElementById('new-photo-input').onchange=function(){
+  const file=this.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    newPhotoDataURL=e.target.result;
+    document.getElementById('new-photo-preview').src=e.target.result;
+    document.getElementById('new-photo-preview').style.display='block';
+    document.getElementById('new-photo-placeholder').style.display='none';
+    document.getElementById('new-photo-clear').style.display='inline';
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('new-photo-clear').onclick=function(){
+  newPhotoDataURL=null;
+  document.getElementById('new-photo-preview').style.display='none';
+  document.getElementById('new-photo-placeholder').style.display='flex';
+  document.getElementById('new-photo-clear').style.display='none';
+  document.getElementById('new-photo-input').value='';
+};
+
+document.getElementById('new-photo-placeholder').onclick=()=>document.getElementById('new-photo-input').click();
+
+document.getElementById('add-sentence-btn').onclick=function(){
+  const raw=document.getElementById('new-sentence').value.trim().toLowerCase();
+  if(!raw){ alert('Please type a sentence first.'); return; }
+  const words=raw.split(/\s+/).filter(Boolean);
+  if(words.length<2||words.length>5){ alert('Sentences must be 2 to 5 words long.'); return; }
+  customSentences.push({text:raw,photo:newPhotoDataURL||null,words:words.length});
+  saveCustom(customSentences);
+  document.getElementById('new-sentence').value='';
+  document.getElementById('new-photo-clear').click();
+  renderCustomList();
+};
+
+function renderCustomList(){
+  const inner=document.getElementById('custom-list-inner');
+  if(customSentences.length===0){
+    inner.innerHTML='<div class="empty-state">No custom sentences yet.<br>Add one above to get started!</div>';
+    return;
+  }
+  inner.innerHTML='';
+  customSentences.forEach((s,i)=>{
+    const item=document.createElement('div'); item.className='custom-item';
+    const photoEl=s.photo
+      ? `<img class="ci-photo" src="${s.photo}">`
+      : `<div class="ci-no-photo">📝</div>`;
+    item.innerHTML=`${photoEl}<div style="flex:1"><div class="ci-text">${s.text}</div><div class="ci-words">${s.words} words</div></div><button class="ci-del" data-idx="${i}">×</button>`;
+    item.querySelector('.ci-del').onclick=function(){
+      customSentences.splice(+this.dataset.idx,1);
+      saveCustom(customSentences);
+      renderCustomList();
+    };
+    inner.appendChild(item);
+  });
+}
+
+// ═══════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════
+let wordLength=2, score=0, roundsAtLevel=0;
+const ROUNDS_PER_LEVEL=4;
+let currentWords=[], tileOrder=[], slotsFilled=0;
+let hintShown=false;
+let usedIdxCustom=[];
+let usedBuiltIn={2:[],3:[],4:[],5:[]};
+let currentCluePhoto=null;
+// For clue photo per-sentence in custom mode we store idx
+let currentCustomIdx=-1;
+
+function resetGame(){
+  wordLength=2; score=0; roundsAtLevel=0;
+  usedIdxCustom=[]; usedBuiltIn={2:[],3:[],4:[],5:[]};
+  currentCustomIdx=-1;
+  updateScoreUI();
+}
+
+function pickSentence(){
+  if(useCustomMode){
+    const avail=customSentences.map((_,i)=>i).filter(i=>!usedIdxCustom.includes(i));
+    if(avail.length===0){ usedIdxCustom=[]; return pickSentence(); }
+    const idx=avail[Math.floor(Math.random()*avail.length)];
+    usedIdxCustom.push(idx);
+    currentCustomIdx=idx;
+    const s=customSentences[idx];
+    currentCluePhoto=s.photo||null;
+    wordLength=s.words;
+    return s.text;
+  } else {
+    currentCustomIdx=-1;
+    const pool=BUILT_IN[wordLength].filter(s=>!usedBuiltIn[wordLength].includes(s));
+    if(pool.length===0){ usedBuiltIn[wordLength]=[]; return pickSentence(); }
+    const s=pool[Math.floor(Math.random()*pool.length)];
+    usedBuiltIn[wordLength].push(s);
+    currentCluePhoto=null;
+    return s;
+  }
+}
+
+function newRound(){
+  hintShown=false;
+  document.getElementById('hint-text').textContent='';
+  document.getElementById('hint-btn').style.display='inline-block';
+  document.getElementById('mic-bar').textContent='';
+  slotsFilled=0; listeningTileIdx=-1;
+
+  const sentence=pickSentence();
+  currentWords=sentence.trim().split(/\s+/);
+  tileOrder=shuffle([...currentWords]);
+
+  updateLevelUI();
+  renderSlots();
+  renderTiles();
+  updateProgress();
+  renderClue(currentCluePhoto);
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+function updateLevelUI(){
+  if(useCustomMode){
+    document.getElementById('level-label').textContent='MY SENTENCES';
+  } else {
+    document.getElementById('level-label').textContent=`LEVEL ${wordLength-1} · ${wordLength} WORDS`;
+  }
+  updateScoreUI();
+}
+function updateScoreUI(){ document.getElementById('score-val').textContent=score; }
+function updateProgress(){
+  if(useCustomMode){ document.getElementById('prog-fill').style.width='0%'; return; }
+  document.getElementById('prog-fill').style.width=(roundsAtLevel/ROUNDS_PER_LEVEL*100)+'%';
+}
+
+// ═══════════════════════════════════════════
+// CLUE PHOTO
+// ═══════════════════════════════════════════
+function renderClue(photoSrc){
+  const img=document.getElementById('clue-img');
+  const ph=document.getElementById('clue-placeholder');
+  if(photoSrc){
+    img.src=photoSrc; img.style.display='block'; ph.style.display='none';
+  } else {
+    img.style.display='none'; ph.style.display='flex';
+  }
+}
+
+// In-game photo upload
+document.getElementById('clue-placeholder').onclick=()=>document.getElementById('clue-file-input').click();
+document.getElementById('clue-upload-overlay').onclick=()=>document.getElementById('clue-file-input').click();
+document.getElementById('clue-file-input').onchange=function(){
+  const file=this.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    currentCluePhoto=e.target.result;
+    renderClue(currentCluePhoto);
+    // Also save to custom sentence if in custom mode
+    if(useCustomMode && currentCustomIdx>=0){
+      customSentences[currentCustomIdx].photo=e.target.result;
+      saveCustom(customSentences);
+    }
+  };
+  reader.readAsDataURL(file);
+  this.value='';
+};
+
+// ═══════════════════════════════════════════
+// RENDER SLOTS & TILES
+// ═══════════════════════════════════════════
+function renderSlots(){
+  const area=document.getElementById('target-slots'); area.innerHTML='';
+  currentWords.forEach((_,i)=>{
+    const slot=document.createElement('div'); slot.className='slot'; slot.id=`slot-${i}`;
+    area.appendChild(slot);
+  });
+}
+
+const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+const speechAvail=!!SpeechRec;
+let recognition=null, listeningTileIdx=-1;
+
+function renderTiles(){
+  const area=document.getElementById('tiles-area'); area.innerHTML='';
+  tileOrder.forEach((word,i)=>{
+    const tile=document.createElement('button');
+    tile.className=`word-tile tc-${i%8}`; tile.id=`tile-${i}`;
+    const wordSpan=document.createElement('span'); wordSpan.textContent=word;
+    tile.appendChild(wordSpan);
+    if(speechAvail){
+      const mic=document.createElement('button'); mic.className='mic-btn'; mic.textContent='🎤';
+      mic.addEventListener('pointerdown',e=>{ e.stopPropagation(); startListening(i,word,tile,mic); });
+      tile.appendChild(mic);
+    }
+    tile.addEventListener('pointerdown',e=>{ if(e.target.classList.contains('mic-btn'))return; tapTile(i,word,tile); });
+    area.appendChild(tile);
+  });
+}
+
+// ═══════════════════════════════════════════
+// TAP LOGIC
+// ═══════════════════════════════════════════
+function tapTile(tileIdx,word,tileEl){
+  if(tileEl.classList.contains('used'))return;
+  const expected=currentWords[slotsFilled];
+  if(word===expected){ correctWord(tileIdx,word,tileEl); }
+  else { wrongWord(tileEl); }
+}
+
+function correctWord(tileIdx,word,tileEl){
+  playSfxCorrect();
+  tileEl.classList.add('used');
+  const slot=document.getElementById(`slot-${slotsFilled}`);
+  slot.textContent=word; slot.classList.add('filled','correct');
+  slotsFilled++;
+  if(slotsFilled===currentWords.length) sentenceComplete();
+}
+
+function wrongWord(tileEl){
+  playSfxWrong();
+  tileEl.style.animation=''; void tileEl.offsetWidth;
+  const slot=document.getElementById(`slot-${slotsFilled}`);
+  slot.classList.add('wrong');
+  setTimeout(()=>slot.classList.remove('wrong'),400);
+  showFeedback('😬','Try again!','#ff8080',700);
+}
+
+function sentenceComplete(){
+  stopListening();
+  playSfxWin();
+  const pts=hintShown?1:(useCustomMode?currentWords.length:wordLength);
+  score+=pts; updateScoreUI();
+  roundsAtLevel++;
+  confetti();
+  const aff=AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)];
+  showFeedback('🎉',aff,'#f7c948',1300);
+  setTimeout(()=>{
+    if(useCustomMode){
+      newRound();
+    } else {
+      if(roundsAtLevel>=ROUNDS_PER_LEVEL){
+        if(wordLength>=5){ playSfxWin(); setTimeout(showWin,600); }
+        else { roundsAtLevel=0; wordLength++; showLevelBanner(); }
+      } else { newRound(); }
+    }
+  },1500);
+}
+
+function showHint(){
+  hintShown=true;
+  document.getElementById('hint-text').textContent=currentWords.join(' ');
+  document.getElementById('hint-btn').style.display='none';
+}
+
+// ═══════════════════════════════════════════
+// LEVEL BANNER
+// ═══════════════════════════════════════════
+function showLevelBanner(){
+  const aff=AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)];
+  document.getElementById('lb-count').textContent=`${wordLength} words!`;
+  document.getElementById('lb-affirm').textContent=aff;
+  document.getElementById('lb-affirm').style.color=GLOWS[Math.floor(Math.random()*GLOWS.length)];
+  document.getElementById('level-banner').style.display='flex';
+  confetti();
+}
+function hideLevelBanner(){ document.getElementById('level-banner').style.display='none'; }
+
+// ═══════════════════════════════════════════
+// WIN
+// ═══════════════════════════════════════════
+function showWin(){
+  stopListening();
+  document.getElementById('win-score').textContent=score;
+  show('win-screen'); confetti(); confetti();
+}
+
+// ═══════════════════════════════════════════
+// FEEDBACK
+// ═══════════════════════════════════════════
+let fbTO=null;
+function showFeedback(emoji,text,color,dur){
+  const el=document.getElementById('feedback');
+  document.getElementById('fb-emoji').textContent=emoji;
+  const ft=document.getElementById('fb-text'); ft.textContent=text; ft.style.color=color;
+  el.classList.add('show'); clearTimeout(fbTO);
+  fbTO=setTimeout(()=>el.classList.remove('show'),dur||800);
+}
+
+// ═══════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════
+function confetti(){
+  const layer=document.getElementById('confetti-layer');
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    const dur=(0.8+Math.random()*1.2).toFixed(2)+'s';
+    p.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${CONF_COLORS[i%CONF_COLORS.length]};--dur:${dur};animation-delay:${(Math.random()*.4).toFixed(2)}s;transform:rotate(${Math.random()*360}deg);border-radius:${Math.random()>.5?'50%':'2px'};`;
+    layer.appendChild(p);
+    setTimeout(()=>p.remove(),2200);
+  }
+}
+
+// ═══════════════════════════════════════════
+// SPEECH RECOGNITION
+// ═══════════════════════════════════════════
+function startListening(tileIdx,targetWord,tileEl,micEl){
+  if(!speechAvail){ alert('Speech not available. Try Chrome or Safari.'); return; }
+  if(tileEl.classList.contains('used'))return;
+  stopListening();
+  listeningTileIdx=tileIdx;
+  tileEl.classList.add('listening-tile'); micEl.classList.add('active');
+  document.getElementById('mic-bar').textContent=`🎤 Listening... say "${targetWord}"`;
+  recognition=new SpeechRec();
+  recognition.lang='en-US'; recognition.interimResults=false; recognition.maxAlternatives=6; recognition.continuous=false;
+  recognition.onresult=function(e){
+    const heard=Array.from(e.results[0]).map(r=>r.transcript.trim().toLowerCase());
+    const target=targetWord.toLowerCase();
+    tileEl.classList.remove('listening-tile'); micEl.classList.remove('active');
+    if(heard.includes(target)||heard.some(h=>h===target)){
+      document.getElementById('mic-bar').textContent=`✅ "${targetWord}" — yes!`;
+      setTimeout(()=>document.getElementById('mic-bar').textContent='',900);
+      tapTile(tileIdx,targetWord,tileEl);
+    } else {
+      document.getElementById('mic-bar').textContent=`❌ Heard "${heard[0]||'?'}" — try tapping!`;
+      const slot=document.getElementById(`slot-${slotsFilled}`);
+      slot.classList.add('wrong'); playSfxWrong();
+      setTimeout(()=>{ slot.classList.remove('wrong'); document.getElementById('mic-bar').textContent=''; },1300);
+    }
+    listeningTileIdx=-1; recognition=null;
+  };
+  recognition.onerror=function(){
+    document.getElementById('mic-bar').textContent='⚠️ Mic issue — tap the word instead';
+    tileEl.classList.remove('listening-tile'); micEl.classList.remove('active');
+    setTimeout(()=>document.getElementById('mic-bar').textContent='',2000);
+    listeningTileIdx=-1; recognition=null;
+  };
+  recognition.onend=function(){ tileEl.classList.remove('listening-tile'); micEl.classList.remove('active'); listeningTileIdx=-1; };
+  try{ recognition.start(); }catch(e){ recognition=null; }
+}
+
+function stopListening(){
+  if(recognition){ try{recognition.stop();}catch(e){} recognition=null; }
+  listeningTileIdx=-1;
+  document.querySelectorAll('.listening-tile').forEach(t=>t.classList.remove('listening-tile'));
+  document.querySelectorAll('.mic-btn.active').forEach(m=>m.classList.remove('active'));
+  document.getElementById('mic-bar').textContent='';
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+show('home');
+renderCustomList();
+</script>
+</body>
+</html>
